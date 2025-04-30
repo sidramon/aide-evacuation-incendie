@@ -99,6 +99,7 @@ const ResidentForm: React.FC<ResidentFormProps> = ({ isOpen, onClose }) => {
   const question = step === "questions" ? getCurrentQuestion() : null;
 
   const handleFormSubmit = () => {
+    resetQuestionnaire();
     initializeResident(name, roomNumber);
     setResidentData(getResident());
     setStep("questions");

@@ -15,6 +15,15 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Couleurs et valeurs "constantes" */
+  --list-item-hover-bg: #444444;        /* fond plus pâle */
+  --list-item-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --list-item-shadow-hover: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --list-item-transition: background-color 0.2s ease,
+                         transform 0.2s ease,
+                         box-shadow 0.2s ease;
+  --list-item-elevation: -4px;          /* translation verticale au hover */
 }
 
 a {
@@ -57,4 +66,22 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.resident-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: var(--list-item-bg);
+  border-radius: 0.5rem;
+  box-shadow: var(--list-item-shadow);
+  transition: var(--list-item-transition);
+  cursor: pointer;
+}
+
+.resident-list-item:hover {
+  background-color: var(--list-item-hover-bg);
+  transform: translateY(var(--list-item-elevation));
+  box-shadow: var(--list-item-shadow-hover);
 }

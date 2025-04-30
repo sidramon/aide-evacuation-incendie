@@ -1,3 +1,4 @@
+// components/ResidentsList.tsx
 import React, { useState } from 'react';
 import { useResidents } from '../contexts/ResidentContext';
 import { Resident } from '../models/resident';
@@ -49,6 +50,18 @@ const closeBtnStyle: React.CSSProperties = {
   lineHeight: 1,
 };
 
+// Style React pour le conteneur de la liste
+const listContainerStyle: React.CSSProperties = {
+  backgroundColor: 'rgb(33, 33, 33)',     // fond gris clair
+  borderRadius: '12px',            // bords arrondis
+  boxShadow: '0 4px 12px rgba(0,0,0,0.1)', // ombre douce
+  padding: '16px',                 // espacement interne
+  width: '300px',                  // largeur fixe
+  display: 'flex',
+  flexDirection: 'column',
+  maxHeight: '80vh',               // hauteur max pour scroll interne
+};
+
 const ResidentsList: React.FC = () => {
   const { residents, removeResident } = useResidents();
   const [selectedResident, setSelectedResident] = useState<Resident | null>(null);
@@ -58,13 +71,7 @@ const ResidentsList: React.FC = () => {
     return (
       <div style={overlayStyle} onClick={() => setSelectedResident(null)}>
         <div style={modalStyle} onClick={e => e.stopPropagation()}>
-          <button
-            onClick={() => setSelectedResident(null)}
-            style={closeBtnStyle}
-            aria-label="Fermer"
-          >
-            ✕
-          </button>
+          <button onClick={() => setSelectedResident(null)} style={closeBtnStyle} aria-label="Fermer">✕</button>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', textAlign: 'center' }}>Informations du résident</h3>
           <ResidentSummaryTable resident={selectedResident} />
         </div>
@@ -73,27 +80,25 @@ const ResidentsList: React.FC = () => {
   };
 
   return (
-    <div className="w-[300px] bg-white border-l border-gray-300 shadow-xl p-6 flex flex-col overflow-y-auto">
+    <div style={listContainerStyle} className="border-l border-b border-gray-300">
       <h2 className="text-2xl font-bold mb-6 text-center">Résidents</h2>
+
       {residents.length === 0 ? (
         <p className="text-gray-600 text-center">Aucun résident pour le moment.</p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-4 pr-2" style={{ flex: 1, overflowY: 'auto' }}>
           {residents.map((r) => (
             <li
               key={r.roomNumber}
               onClick={() => setSelectedResident(r)}
-              className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition cursor-pointer hover:bg-gray-50"
+              className="resident-list-item"
             >
               <div className="flex items-baseline">
                 <strong className="font-bold text-gray-800">{r.name}&nbsp;</strong>
                 <em className="text-sm text-gray-600">(App. {r.roomNumber})</em>
               </div>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeResident(r.roomNumber);
-                }}
+                onClick={(e) => { e.stopPropagation(); removeResident(r.roomNumber); }}
                 className="opacity-0 hover:opacity-100 text-red-500 hover:text-red-700 transition"
                 aria-label="Supprimer résident"
               >
@@ -103,6 +108,7 @@ const ResidentsList: React.FC = () => {
           ))}
         </ul>
       )}
+
       {renderModal()}
     </div>
   );

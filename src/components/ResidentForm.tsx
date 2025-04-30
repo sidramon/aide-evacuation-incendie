@@ -1,4 +1,3 @@
-// src/components/ResidentForm.tsx
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -9,7 +8,9 @@ import {
   isQuestionnaireComplete,
   interpretResponses,
   submitResident,
+  getResident,
 } from "../services/questionnaire";
+import { ResidentSummaryTable } from "./ResidentSummaryTable";
 
 interface ResidentFormProps {
   isOpen: boolean;
@@ -33,8 +34,8 @@ const overlayStyle: React.CSSProperties = {
 
 const modalStyle: React.CSSProperties = {
   backgroundColor: "#fff",
-  width: "720px",
-  height: "480px",
+  width: "800px",
+  height: "500px",
   borderRadius: "16px",
   padding: "24px",
   position: "relative",
@@ -73,9 +74,9 @@ const buttonStyle: React.CSSProperties = {
   margin: "8px",
 };
 
-const yesStyle: React.CSSProperties = {...buttonStyle, backgroundColor: "#10b981", color: "#fff"};
-const noStyle: React.CSSProperties  = {...buttonStyle, backgroundColor: "#ef4444", color: "#fff"};
-const confirmStyle: React.CSSProperties = {...buttonStyle, backgroundColor: "#1e40af", color: "#fff"};
+const yesStyle: React.CSSProperties = { ...buttonStyle, backgroundColor: "#10b981", color: "#fff" };
+const noStyle: React.CSSProperties = { ...buttonStyle, backgroundColor: "#ef4444", color: "#fff" };
+const confirmStyle: React.CSSProperties = { ...buttonStyle, backgroundColor: "#1e40af", color: "#fff" };
 const textInputStyle: React.CSSProperties = {
   width: "70%",
   padding: "4px",
@@ -92,22 +93,22 @@ const ResidentForm: React.FC<ResidentFormProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [questionKey, setQuestionKey] = useState(0);
+  const [residentData, setResidentData] = useState(() => getResident());
 
   if (!isOpen) return null;
   const question = step === "questions" ? getCurrentQuestion() : null;
 
   const handleFormSubmit = () => {
-    if (!name || !roomNumber) {
-      alert("Veuillez remplir tous les champs.");
-      return;
-    }
     initializeResident(name, roomNumber);
+    setResidentData(getResident());
     setStep("questions");
   };
 
   const handleAnswer = (value: "oui" | "non") => {
     answerCurrentQuestion(value);
     if (isQuestionnaireComplete()) {
+      interpretResponses();
+      setResidentData(getResident());
       setStep("confirm");
     } else {
       setQuestionKey(k => k + 1);
@@ -115,12 +116,11 @@ const ResidentForm: React.FC<ResidentFormProps> = ({ isOpen, onClose }) => {
   };
 
   const handleConfirm = () => {
-    interpretResponses();
     submitResident();
-    resetQuestionnaire();
     setStep("form");
     setName("");
     setRoomNumber("");
+    setResidentData(null);
     onClose();
   };
 
@@ -129,6 +129,7 @@ const ResidentForm: React.FC<ResidentFormProps> = ({ isOpen, onClose }) => {
     setStep("form");
     setName("");
     setRoomNumber("");
+    setResidentData(null);
     onClose();
   };
 
@@ -168,10 +169,11 @@ const ResidentForm: React.FC<ResidentFormProps> = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {step === "confirm" && (
-          <div style={{ textAlign: "center" }}>
+        {step === "confirm" && residentData && (
+          <div style={{ textAlign: "center", width: "100%" }}>
             <h2>Toutes les réponses sont enregistrées.</h2>
-            <button onClick={handleConfirm} style={confirmStyle}>Confirmer l'ajout du résident</button>
+            <ResidentSummaryTable resident={residentData} />
+            <button onClick={handleConfirm} style={confirmStyle}>Enregistrer le résident</button>
           </div>
         )}
       </div>

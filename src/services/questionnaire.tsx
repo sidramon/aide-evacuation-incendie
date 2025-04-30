@@ -47,7 +47,7 @@ const questions: Question[] = [
   { id: "1D", text: "Le résident peut-il se déplacer seul jusqu'à un lieu sécuritaire (ex. : la cage d'escalier) ?" },
   { id: "1E", text: "Le résident est-il capable de monter ou descendre l'escalier seul ?" },
   { id: "1F", text: "Si non, pourrait-il le faire en s'asseyant sur les fesses ?", skipIf: answers => answers["1E"]?.toLowerCase() === "oui" },
-  { id: "1G", text: "Si non, serait-il en mesure de le faire avec l'aide d'une autre personne ?", skipIf: answers => answers["1E"]?.toLowerCase() === "oui" },
+  { id: "1G", text: "Si non, serait-il en mesure de le faire avec l'aide d'une autre personne ?", skipIf: answers => answers["1F"]?.toLowerCase() === "oui" },
   { id: "1H", text: "Est-ce que le résident est totalement dépendant d'un apport supplémentaire en oxygène (bombonne ou concentrateur) ?" },
 
   // Section 2 – Compréhension / Jugement
